@@ -15,16 +15,15 @@ best <- function(state,outcome) {
   ## Check that state and outcome are valid
   CheckState<- function(state){
                 for (i in 1:length(UniqState))
-                  ##print (c(i,UniqState[i]))
-                  if (state == UniqState[i] ) { print(c("State matched!!", i))
+                  if (state == UniqState[i] ) { ##print(c("State matched!!", i))
                                                 return (state)}
-                    else if (i == length(UniqState)) return(FALSE)##stop("State is not Recognized")
+                    else if (i == length(UniqState)) return(FALSE)
                 }
   CheckOutcome<- function(outcome){
     for (i in 1:length(UniqOutcome))
-      if (outcome == UniqOutcome[i] ) { print(c("outcome matched!!", i))
+      if (outcome == UniqOutcome[i] ) { ##print(c("outcome matched!!", i))
                                     return (outcome)}
-    else if (i == length(UniqOutcome)) return (FALSE) ##stop("Outcome is not Recognized")
+    else if (i == length(UniqOutcome)) return (FALSE) 
   }
    
   state<-CheckState(state)
@@ -33,15 +32,20 @@ best <- function(state,outcome) {
   if (outcome == FALSE) stop("invalid outcome")
  
   
-  ##if (state != )
-  
   ## Return hospital name in that state with the lowest 30-day death rate
-  if (outcome == "heart attack") minrate <- min(outcomeOfCare[outcomeOfCare$State==state,"heart.attack"]) 
-  else if (outcome == "heart failure") minrate <- min(outcomeOfCare[outcomeOfCare$State==state,"heart.failure"])
-  else if (outcome == "pneumonia") minrate <- min(outcomeOfCare[outcomeOfCare$State==state,"pneumonia"])
+  ## Flaw in this code is that the minrate is converted into numeric, however output is looking for a character match.  i.e. 12 != "12.0"
+  if (outcome == "heart attack") {minrate <- minrate <- min(outcomeOfCare[outcomeOfCare$State==state,"heart.attack"])
+                                  output <- outcomeOfCare[outcomeOfCare$heart.attack==minrate & outcomeOfCare$State==state,2]
+                                  }
+  else if (outcome == "heart failure") {minrate <- min(na.omit(as.numeric(outcomeOfCare[outcomeOfCare$State==state,"heart.failure"])))
+                                        output <- outcomeOfCare[outcomeOfCare$heart.failure==minrate & outcomeOfCare$State==state,2]
+                                  }
+  else if (outcome == "pneumonia") {minrate <- min(na.omit(as.numeric(outcomeOfCare[outcomeOfCare$State==state,"pneumonia"])))
+                                    output <- outcomeOfCare[outcomeOfCare$pneumonia==minrate & outcomeOfCare$State==state,2]
+                                    }
   else stop ("Check spelling of your outcome")
-  print(minrate)
-  output <- outcomeOfCare[outcomeOfCare$heart.attack==minrate & outcomeOfCare$State==state,2]
+  #print(outcome)
+  #print(minrate)
   print(output)
  
   

@@ -7,6 +7,9 @@ best <- function(state,outcome) {
   UniqState <- unique(outcomeOfCare$State)
   ##UniqHosp <- unique(outcomeOfCare$Hospital.name)
   UniqOutcome <- c("heart attack","heart failure","pneumonia")
+  dimnames(outcomeOfCare)[[2]][[11]]<-"heart.attack"  ##renaming long column name to be referenced later
+  dimnames(outcomeOfCare)[[2]][[17]]<-"heart.failure"
+  dimnames(outcomeOfCare)[[2]][[23]]<-"pneumonia"
   
   
   ## Check that state and outcome are valid
@@ -17,7 +20,6 @@ best <- function(state,outcome) {
                                                 return (state)}
                     else if (i == length(UniqState)) stop("State is not Recognized")
                 }
-  
   CheckOutcome<- function(outcome){
     for (i in 1:length(UniqOutcome))
       if (outcome == UniqOutcome[i] ) { print(c("outcome matched!!", i))
@@ -32,8 +34,14 @@ best <- function(state,outcome) {
   ##if (state != )
   
   ## Return hospital name in that state with the lowest 30-day death rate
-  ##if (outcome == "heart attack") minrate <- min(outcomeOfCare[,11]) 
-  ##else if (outcome == "heart failure") minrate <- min(outcomeOfCare[,17])
+  if (outcome == "heart attack") minrate <- min(outcomeOfCare[outcomeOfCare$State==state,11]) 
+  else if (outcome == "heart failure") minrate <- min(outcomeOfCare[outcomeOfCare$State==state,17])
+  else if (outcome == "pneumonia") minrate <- min(outcomeOfCare[outcomeOfCare$State==state,23])
+  else stop ("Check spelling of your outcome")
+  print(minrate)
+  print(outcomeOfCare[,outcomeOfCare$heart.attack])
+  return (minrate)
+  
  
   
 }

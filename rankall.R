@@ -42,11 +42,11 @@ rankall <- function(outcome, num="best"){
   NoNA<-outcomeOfCare$Provider.Number[cases.ha]
   newOutcome<<-outcomeOfCare[outcomeOfCare$Provider.Number %in% NoNA,]  ## no more NAs !
   dataout<-cbind(newOutcome[,"State"],newOutcome[,"Hospital.Name"],newOutcome[,col.outcome])  ## characters
-  dataoutdf<-data.frame(State=dataout[,1],HospitalName= dataout[,2],Outcome=as.numeric(dataout[,3]),stringsAsFactors=FALSE) ## organized df
+  dataoutdf<-data.frame(state=dataout[,1],hospital= dataout[,2],Outcome=as.numeric(dataout[,3]),stringsAsFactors=FALSE) ## organized df
   
-  splt<-split(dataoutdf,dataoutdf$State)  ## split according to state  c
-  ranking<-tapply(dataoutdf$Outcome,dataoutdf$State,rank)   ## same as split then lapply  b
-  d1 <- NULL
+  splt<-split(dataoutdf,dataoutdf$state)  ## split according to state  c
+  ranking<-tapply(dataoutdf$Outcome,dataoutdf$state,rank)   ## same as split then lapply  b
+  d1 <- data.frame(row.names=NULL)
   for (i in names(splt)) { 
     d<-cbind(splt[[i]],Rank=ranking[[i]])
     d1<-rbind(d1,d)
@@ -54,12 +54,12 @@ rankall <- function(outcome, num="best"){
   }
   write.csv(d1,"data2.csv",row.names=FALSE)
   if (num=="best")  num <- 1
-  else if (num == "worst") num <- length(output[[3]])
+  else if (num == "worst") num <- length(d1[d1$Rank == num,])  ## FIX THIS!
   else num <-num
   ##print(num)
   ## For each state, find the hospital of the given rank
   #ranking <- tapply(newOutcome[,col.outcome],newOutcome$State,function (s) order(newOutcome,newOutcome$Hospital.Name))  ## ranks all ratings for each state.  Output via list
-  return (d1[d1$Rank == num,c("HospitalName","State")])
+  return (d1[d1$Rank == num,c("hospital","state")])
   ##return(d1)
   ## Return a data frame with the hospital names and the abbreviated state names
 }

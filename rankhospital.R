@@ -84,7 +84,7 @@ rankhospital <- function (state, outcome, num ="best") {
     
   
   
-  return (output)
+  return (as.character(output[num,"HospitalName"]))
   ## Return hospital name in that state with the given rank
   ## 30- day death rate
 }

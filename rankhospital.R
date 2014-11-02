@@ -34,12 +34,26 @@ rankhospital <- function (state, outcome, num ="best") {
               cases.ha<-complete.cases(as.numeric(outcomeOfCare$heart.attack))
               NoNA<-outcomeOfCare$Provider.Number[cases.ha]
               newOutcome<-outcomeOfCare[outcomeOfCare$Provider.Number %in% NoNA,]  ## no more NAs on heart.attack!
-              write.csv(newOutcome,"data1.csv",row.names=FALSE)  ## test
-              ##a<-tapply(newOutcome,newOutcome$State,function(s) rank(newOutcome))
+              ##write.csv(newOutcome,"data1.csv",row.names=FALSE)  ## test
+              
+              ranking <- tapply(newOutcome$heart.attack,newOutcome$State,rank)  ## ranks all ratings for each state.  Output via list
+              ##write.csv(ranking,"data2.csv",row.names=FALSE)
+              
+  a<- ranking[rownames=state]  ##list [define which state ]
+  b<- data.frame(newOutcome[newOutcome$State==state,"Hospital.Name"], newOutcome[newOutcome$State==state,"heart.attack"], a)
+  
+  output<-b[with(b,order(b[3])),]
+  colnames(output)<-c("HospitalName","Outcome", "Rank")
+  
+  if (num=="best")  num <- 1
+  else if (num == "worst") num <- length(output[[3]])
+  else num <-num
+              
+  
     
   }
   
-  return (newOutcome)
+  return (output[num,])
   ## Return hospital name in that state with the given rank
   ## 30- day death rate
 }
